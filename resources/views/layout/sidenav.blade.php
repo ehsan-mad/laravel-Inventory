@@ -78,7 +78,7 @@
         <span class="side-bar-item-caption">Dashboard</span>
     </a>
 
-    <a href="{{url("/customerPage")}}" class="side-bar-item">
+    <a href="{{url("/customerPage")}}" class="side-bar-item {{ request()->routeIs('customerPage') ? 'side-bar-item-active' : '' }}">
         <i class="bi bi-people"></i>
         <span class="side-bar-item-caption">Customer</span>
     </a>
@@ -88,12 +88,12 @@
         <span class="side-bar-item-caption">Category</span>
     </a>
 
-    <a href="{{url("/productPage")}}" class="side-bar-item">
+    <a href="{{url("/productPage")}}" class="side-bar-item {{ request()->routeIs('productPage') ? 'side-bar-item-active' : '' }}"">
         <i class="bi bi-bag"></i>
         <span class="side-bar-item-caption">Product</span>
     </a>
 
-    <a href="{{url('/salePage')}}" class="side-bar-item">
+    <a href="{{url('/salePage')}}" class="side-bar-item {{ request()->routeIs('salePage') ? 'side-bar-item-active' : '' }}">
         <i class="bi bi-currency-dollar"></i>
         <span class="side-bar-item-caption">Create Sale</span>
     </a>
@@ -103,7 +103,7 @@
         <span class="side-bar-item-caption">Invoice</span>
     </a>
 
-    <a href="{{url('/reportPage')}}" class="side-bar-item">
+    <a href="{{url('/reportPage')}}" class="side-bar-item {{ request()->routeIs('reportPage') ? 'side-bar-item-active' : '' }}">
         <i class="bi bi-file-earmark-bar-graph"></i>
         <span class="side-bar-item-caption">Report</span>
     </a>
