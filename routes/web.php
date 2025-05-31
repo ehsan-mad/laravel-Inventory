@@ -31,3 +31,7 @@ Route::get('/customerPage', [CustomerController::class, 'customerPage'])->name('
 
 // category routes
 Route::get('/category-list', [CategoryController::class, 'categoryList'])->middleware(TokenVerificationMiddleware::class);
+Route::post('/categoryCreate', [CategoryController::class, 'CategoryCreate'])->middleware(TokenVerificationMiddleware::class);
+Route::post('/categoryDelete', [CategoryController::class, 'CategoryDelete'])->middleware(TokenVerificationMiddleware::class);
+Route::post('/categoryUpdate', [CategoryController::class, 'CategoryUpdate'])->middleware(TokenVerificationMiddleware::class);
+Route::post('/categoryById', [CategoryController::class, 'CategoryById'])->middleware(TokenVerificationMiddleware::class);
