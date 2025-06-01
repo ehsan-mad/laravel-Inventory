@@ -14,12 +14,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'homepage']);
 Route::get('/dashboard', [DashboardController::class, 'dashboardPage'])->name('dashboardPage');
+
+// user
 Route::post('/userRegistration', [UserController::class, 'userRegistration']);
 Route::post('/userLogin', [UserController::class, 'userLogin']);
 Route::post('/resetPassword', [UserController::class, 'resetPassword'])->middleware(TokenVerificationMiddleware::class);
 Route::post('/sendotp', [UserController::class, 'sendOtp']);
 Route::post('/verifyotp', [UserController::class, 'verifyOtp']);
-Route::get('/userProfile', [UserController::class, 'profilePage']);
+Route::get('/userProfile', [UserController::class, 'profilePage'])->middleware(TokenVerificationMiddleware::class);
+Route::post('/updateProfile', [UserController::class, 'updateProfile'])->middleware(TokenVerificationMiddleware::class);
+
 Route::get('/invoicePage', [InvoiceController::class, 'invoicePage'])->name('InvoicePage');
 Route::get('/productPage', [ProductController::class, 'productPage'])->name('productPage');
 Route::get('/salePage', [SaleController::class, 'salePage'])->name('salePage');
@@ -47,7 +51,11 @@ Route::post('/productById', [ProductController::class, 'ProductById'])->middlewa
 Route::post('/productUpdate', [ProductController::class, 'ProductUpdate'])->middleware(TokenVerificationMiddleware::class);
 Route::post('/productDelete', [ProductController::class, 'ProductDelete'])->middleware(TokenVerificationMiddleware::class);
 
-
 // invoice
 Route::post('/invoiceCreate', [InvoiceController::class, 'InvoiceCreate'])->middleware(TokenVerificationMiddleware::class);
+Route::get('/invoiceSelect', [InvoiceController::class, 'InvoiceSelect'])->middleware(TokenVerificationMiddleware::class);
+Route::post('/invoiceDetails', [InvoiceController::class, 'InvoiceDetails'])->middleware(TokenVerificationMiddleware::class);
+Route::post('/invoiceDelete', [InvoiceController::class, 'invoiceDelete'])->middleware(TokenVerificationMiddleware::class);
 
+// dashboard
+Route::get('/dashboard', [DashboardController::class, 'summary'])->middleware(TokenVerificationMiddleware::class);

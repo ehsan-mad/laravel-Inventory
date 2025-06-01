@@ -79,10 +79,10 @@ class ProductController extends Controller
         $product = Product::where('id', $productId)->where('user_id', $request->header('user_id'))->first();
 
         if($request->hasFile('image')) {
-            Storage::disk('public')->delete($product->img_url);
             $image     = $request->file('image');
             $imageName = $product->user_id . '_' . time() . '_' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('uploads', $imageName, 'public');
+            Storage::disk('public')->delete($product->img_url);
         }else{
             $imagePath =$product->img_url;
         }
@@ -91,7 +91,7 @@ class ProductController extends Controller
         if ($product) {
             $product->update([
                 'name'        => $request->input('name') ?? $product->name,
-                'img_url'     => $imagePath ?? $product->img_url,
+                'img_url'     => $imagePath ,
                 'price'       => $request->input('price') ?? $product->price,
                 'unit'        => $request->input('unit') ?? $product->unit,
                 'category_id' => $request->input('category_id') ?? $product->category_id,
