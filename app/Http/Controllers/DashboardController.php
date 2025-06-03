@@ -11,6 +11,10 @@ use Illuminate\Http\Request;
 class DashboardController extends Controller
 {
     //
+    public function dashboardPage()
+    {
+        return view('pages.dashboard.dashboard');
+    }
     public function summary(Request $request)
     {
         $product  = Product::where('user_id', request()->header('user_id'))->count();

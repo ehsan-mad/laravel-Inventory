@@ -39,3 +39,55 @@
         </div>
     </div>
 </div>
+
+<script>
+    async function onRegistration(){
+        let email = document.getElementById('email').value;
+        let firstName= document.getElementById('firstName').value;
+        let lastName= document.getElementById('lastName').value;
+        let mobile= document.getElementById('mobile').value;
+        let password= document.getElementById('password').value;
+
+        if(email === ""){
+            return errorToast("Email is required");
+        }else if(firstName === ""){
+            return errorToast("First Name is required");
+        }else if(lastName === ""){
+            return errorToast("Last Name is required");
+        }else if(mobile === ""){
+            return errorToast("Mobile Number is required");
+        }else if(password === ""){
+            return errorToast("Password is required");
+        }else{
+            showLoader();
+            try{
+                let response = await axios.post('/user-Registration', {
+                    email: email,
+                    first_name: firstName,
+                    last_name: lastName,
+                    mobile: mobile,
+                    password: password
+                });
+                hideLoader();
+                if(response.data.status === "success" && response.status === 200){
+                    successToast(response.data.message);
+                    setTimeout(() => {
+                        window.location.href = '/userLogin';
+                    }, 1000);
+                }else{
+                    errorToast(response.data.message);
+                }
+            }catch(e){
+                hideLoader();
+                if(e.response && e.response.data.status===422 ){
+                    let error= e.response.data.errors;
+                    for (let field in error){
+                        errorToast(error[field][0]);
+                    }
+                }else{
+                    errorToast("An error occurred during registration. Please try again.");
+            }
+            }
+        }
+    }
+</script>

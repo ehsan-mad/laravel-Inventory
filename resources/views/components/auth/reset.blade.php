@@ -17,3 +17,43 @@
         </div>
     </div>
 </div>
+
+<script>
+    async function ResetPass() {
+        let password = document.getElementById('password').value;
+        let cpassword = document.getElementById('cpassword').value;
+
+        if (password === "") {
+            return errorToast("Password is required");
+        } else if (cpassword === "") {
+            return errorToast("Confirm Password is required");
+        } else if (password !== cpassword) {
+            return errorToast("Passwords do not match");
+        }
+
+        showLoader();
+        try {
+            const response = await axios.post('/reset-Password', { password: password ,
+                password_confirmation: cpassword
+            });
+
+            if (response.data.status === "success" && response.status === 200) {
+                successToast(response.data.message);
+                setTimeout(() => {
+                    window.location.href = '/userLogin';
+                }, 1000);
+            } else {
+                errorToast(response.data.message);
+            }
+        } catch (error) {
+            hideLoader();
+            if (error.response && error.response.status === 422) {
+                let errors = error.response.data.message;
+                // Display each error message
+                errorToast(errors);
+            } else {
+                errorToast("An unexpected error occurred. Please try again.");
+            }
+        }
+    }
+</script>

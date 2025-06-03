@@ -14,3 +14,42 @@
         </div>
     </div>
 </div>
+<script>
+    async function VerifyEmail() {
+        let email = document.getElementById('email').value;
+
+        if (email === "") {
+            return errorToast("Email is required");
+        }
+        showLoader();
+        try {
+            const response = await axios.post('/sendotp', { email: email });
+
+            if (response.data.status === "success" && response.status === 200) {
+                successToast(response.data.message);
+                sessionStorage.setItem('email', email);
+                setTimeout(() => {
+                    window.location.href = '/verifyOtp';
+                }, 1000);
+            } else {
+                errorToast(response.data.message);
+            }
+        } catch (error) {
+            hideLoader();
+            if (error.response && error.response.status === 422) {
+                let errors = error.response.data.errors;
+                // Display each error message   
+
+                errorToast(errors);
+
+
+            }
+            else {
+
+                errorToast("An unexpected error occurred. Please try again.");
+            }
+        }
+    }
+
+
+</script>
