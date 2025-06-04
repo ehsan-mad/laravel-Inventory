@@ -3,11 +3,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
     //
+    public function categoryPage()
+    {
+        return view('pages.dashboard.category');
+    }
+
     public function categoryList(Request $request)
     {
 
@@ -24,6 +31,16 @@ class CategoryController extends Controller
 
     public function CategoryCreate(Request $request)
     {
+    // Validate the request data
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+    ]);
+    if ($validator->fails()) {
+        return response()->json([
+            'status'  => 'failed',
+            'message' => $validator->errors()->first(),
+        ], 422);
+    }
         // Here you can create a new category in the database
         $category = Category::create([
             'user_id' => $request->header('user_id'),

@@ -32,4 +32,75 @@
     </div>
 </div>
 
+<script>
+    // Function called when Edit button is clicked (loads customer data)
+    async function editCustomer(id) {
+        try {
+            showLoader();
 
+            // Set the ID in hidden field
+            document.getElementById('updateID').value = id;
+
+            // Fetch customer details to populate the form
+            let response = await axios.post(`/customer-id`,{
+                id: id,
+            } , HeaderToken());
+
+            hideLoader();
+
+            if (response.data.status === "success") {
+                // Populate the form with existing data
+                document.getElementById('customerNameUpdate').value = response.data.data.name;
+                document.getElementById('customerEmailUpdate').value = response.data.data.email;
+                document.getElementById('customerMobileUpdate').value = response.data.data.mobile;
+            } else {
+                errorToast("Failed to load customer details");
+            }
+
+        } catch (error) {
+            hideLoader();
+            errorToast("Failed to load customer details");
+        }
+    }
+
+    // Function to actually update the customer
+    async function Update() {
+        let customerName = document.getElementById('customerNameUpdate').value;
+        let customerEmail = document.getElementById('customerEmailUpdate').value;
+        let customerMobile = document.getElementById('customerMobileUpdate').value;
+        let customerId = document.getElementById('updateID').value;
+
+        if (!customerName || !customerEmail || !customerMobile) {
+            errorToast("All fields are required");
+            return;
+        }
+
+        try {
+            showLoader();
+            let response = await axios.post('/customerUpdate', {
+                id: customerId,
+                name: customerName,
+                email: customerEmail,
+                mobile: customerMobile
+            }, HeaderToken());
+
+            hideLoader();
+
+            if (response.data.status === "success") {
+                successToast("Customer updated successfully");
+                document.getElementById('update-form').reset();
+    document.getElementById('update-modal-close').click();
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
+            } else {
+                errorToast("Failed to update customer");
+            }
+        } catch (error) {
+            hideLoader();
+            errorToast("Failed to update customer");
+        }
+    }
+
+
+</script>

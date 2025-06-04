@@ -52,6 +52,7 @@ Route::post('/categoryUpdate', [CategoryController::class, 'CategoryUpdate'])->m
 Route::post('/categoryById', [CategoryController::class, 'CategoryById'])->middleware(TokenVerificationMiddleware::class);
 
 // customer
+Route::get('/customerList', [CustomerController::class, 'customerList'])->middleware(TokenVerificationMiddleware::class);
 Route::post('/customerCreate', [CustomerController::class, 'CustomerCreate'])->middleware(TokenVerificationMiddleware::class);
 Route::post('/customer-id', [CustomerController::class, 'CustomerById'])->middleware(TokenVerificationMiddleware::class);
 Route::post('/customerUpdate', [CustomerController::class, 'CustomerUpdate'])->middleware(TokenVerificationMiddleware::class);

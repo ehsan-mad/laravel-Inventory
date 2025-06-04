@@ -23,3 +23,63 @@
             </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryInput = document.getElementById('categoryName');
+        
+        // Listen for Enter key press in the input field
+        categoryInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent form submission
+                Save(); // Call the Save function
+            }
+        });
+    });
+
+    async function Save(){
+        let category = document.getElementById('categoryName').value;
+        
+        if(category === ""){
+            return errorToast("Category name is required");
+        }
+      
+        try {
+            showLoader();
+
+            let response = await axios.post('/categoryCreate', {
+                name: category,
+            }, HeaderToken());  // ← Add this for authentication
+        
+            hideLoader();
+            
+            if(response.data.status === "success"){
+                successToast(response.data.message);
+                document.getElementById('save-form').reset();
+                document.getElementById('modal-close').click();
+                await getList(); // ← Add await to ensure it completes
+            } else {
+                errorToast(response.data.message);
+            }
+            
+        } catch (error) {
+            hideLoader();
+            
+            if (error.response && error.response.status === 422) {
+                // Handle validation errors
+                let errors = error.response.data.message;
+                if (typeof errors === 'object') {
+                    for (let field in errors) {
+                        errorToast(errors[field][0]);
+                    }
+                } else {
+                    errorToast(errors);
+                }
+            } else if (error.response && error.response.data && error.response.data.message) {
+                errorToast(error.response.data.message);
+            } else {
+                errorToast("Failed to create category. Please try again.");
+            }
+        }
+    }
+</script>

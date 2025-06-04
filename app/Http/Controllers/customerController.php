@@ -8,8 +8,42 @@ use Illuminate\Http\Request ;
 
 class CustomerController extends Controller
 {
+    public function customerPage(){
+        return view('pages.customer.customerPage');
+    }
+    public function customerList(Request $request)
+    {
+        // Fetch the customers from the database for the authenticated user
+        $user_id = $request->header('user_id');
+        $customers = Customer::where('user_id', $user_id)->get();
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Customer List fetched successfully',
+            'data'    => $customers,
+        ], 200);
+    }
     public function CustomerCreate(Request $request)
     {
+        // Validate the request data
+        $request->validate([
+            'name'   => 'required|string|max:255',
+            'email'  => 'required|email|max:255|unique:customers,email,NULL,id,user_id,',
+            'mobile' => 'required|string|max:15',
+        ]);
+        // Create a new customer record
+        $existingCustomer = Customer::where('email', $request->input('email'))
+            ->where('user_id', $request->header('user_id'))
+            ->first();
+
+        if ($existingCustomer) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Customer with this email already exists',
+            ], 409);
+        }
+
+        // Create a new customer
+        
         Customer::create([
             'user_id' => $request->header('user_id'),
             'name'    => $request->input('name'),

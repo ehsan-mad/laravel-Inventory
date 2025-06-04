@@ -28,4 +28,40 @@
     </div>
 </div>
 
+<script>
+    async function Save() {
+        let customerName = document.getElementById('customerName').value;
+        let customerEmail = document.getElementById('customerEmail').value;
+        let customerMobile = document.getElementById('customerMobile').value;
 
+        if (!customerName || !customerEmail || !customerMobile) {
+            errorToast("All fields are required");
+            return;
+        }
+
+        try {
+            showLoader();
+            let response = await axios.post('/customerCreate', {
+                name: customerName,
+                email: customerEmail,
+                mobile: customerMobile
+            }, HeaderToken());
+
+            hideLoader();
+
+            if (response.data.status === "success") {
+                successToast("Customer created successfully");
+                document.getElementById('save-form').reset();
+                document.getElementById('modal-close').click();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                errorToast("Failed to create customer");
+            }
+        } catch (error) {
+            hideLoader();
+            errorToast("Failed to create customer");
+        }
+    }
+</script>
