@@ -60,7 +60,7 @@ Route::post('/customerDelete', [CustomerController::class, 'CustomerDelete'])->m
 
 // product
 Route::post('/productCreate', [ProductController::class, 'ProductCreate'])->middleware(TokenVerificationMiddleware::class);
-Route::post('/productList', [ProductController::class, 'ProductList'])->middleware(TokenVerificationMiddleware::class);
+Route::get('/productList', [ProductController::class, 'ProductList'])->middleware(TokenVerificationMiddleware::class);
 Route::post('/productById', [ProductController::class, 'ProductById'])->middleware(TokenVerificationMiddleware::class);
 Route::post('/productUpdate', [ProductController::class, 'ProductUpdate'])->middleware(TokenVerificationMiddleware::class);
 Route::post('/productDelete', [ProductController::class, 'ProductDelete'])->middleware(TokenVerificationMiddleware::class);

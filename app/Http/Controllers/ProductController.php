@@ -14,7 +14,7 @@ class ProductController extends Controller
         $user_id = $request->header('user_id');
         if ($request->hasFile('image')) {
             $image     = $request->file('image');
-            $imageName = $user_id . '_' . time() . '_' . $image->getClientOriginalExtension();
+            $imageName = $user_id . '_' . time() . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('uploads', $imageName, 'public');
 
             // return view('pages.product.productPage');
@@ -23,8 +23,8 @@ class ProductController extends Controller
         $product = Product::create([
             'user_id'     => $request->header('user_id'),
             'name'        => $request->input('name'),
-            
-            'img_url'       => $imagePath ?? null,
+
+            'img_url'     => $imagePath ?? null,
             'price'       => $request->input('price'),
             'unit'        => $request->input('unit'),
             'category_id' => $request->input('category_id'),
@@ -40,8 +40,14 @@ class ProductController extends Controller
 
     public function ProductList(Request $request)
     {
-        
+
         $product = Product::where('user_id', $request->header('user_id'))->get();
+        $product->transform(function ($product) {
+            if ($product->img_url) {
+                $product->img_url = asset('storage/' . $product->img_url);
+            }
+            return $product;
+        });
         if ($product) {
             return response()->json([
                 'status'  => 'success',
@@ -59,8 +65,14 @@ class ProductController extends Controller
     public function ProductById(Request $request)
     {
         $productId = $request->input('id');
-        $product = Product::where('id', $productId)->where('user_id', $request->header('user_id'))->first();
+        $product   = Product::where('id', $productId)->where('user_id', $request->header('user_id'))->first();
+        
         if ($product) {
+            
+            if ($product->img_url) {
+                $product->img_url = asset('storage/' . $product->img_url);
+            }
+            
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Product fetched successfully',
@@ -76,22 +88,22 @@ class ProductController extends Controller
     public function ProductUpdate(Request $request)
     {
         $productId = $request->input('id');
-        $product = Product::where('id', $productId)->where('user_id', $request->header('user_id'))->first();
+        $product   = Product::where('id', $productId)->where('user_id', $request->header('user_id'))->first();
 
-        if($request->hasFile('image')) {
+        if ($request->hasFile('image')) {
             $image     = $request->file('image');
-            $imageName = $product->user_id . '_' . time() . '_' . $image->getClientOriginalExtension();
+            $imageName = $product->user_id . '_' . time() . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('uploads', $imageName, 'public');
             Storage::disk('public')->delete($product->img_url);
-        }else{
-            $imagePath =$product->img_url;
+        } else {
+            $imagePath = $product->img_url;
         }
         // Check if the product exists
 
         if ($product) {
             $product->update([
                 'name'        => $request->input('name') ?? $product->name,
-                'img_url'     => $imagePath ,
+                'img_url'     => $imagePath,
                 'price'       => $request->input('price') ?? $product->price,
                 'unit'        => $request->input('unit') ?? $product->unit,
                 'category_id' => $request->input('category_id') ?? $product->category_id,
@@ -111,11 +123,11 @@ class ProductController extends Controller
     public function ProductDelete(Request $request)
     {
         $productId = $request->input('id');
-        $product = Product::where('id', $productId)->where('user_id', $request->header('user_id'))->first();
+        $product   = Product::where('id', $productId)->where('user_id', $request->header('user_id'))->first();
 
-        if($product->img_url) {
+        if ($product->img_url) {
             // Delete the image file if it exists
-           Storage::disk('public')->delete($product->img_url);
+            Storage::disk('public')->delete($product->img_url);
         }
         if ($product) {
             $product->delete();
@@ -129,6 +141,11 @@ class ProductController extends Controller
                 'message' => 'Product not found',
             ], 404);
         }
+    }
+
+    public function productPage()
+    {
+        return view('pages.product.productPage');
     }
 
 }
