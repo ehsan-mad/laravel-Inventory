@@ -39,7 +39,7 @@ Route::post('/user-Login', [UserController::class, 'userLogin']);
 Route::post('/reset-Password', [UserController::class, 'resetPassword'])->middleware(TokenVerificationMiddleware::class);
 Route::post('/sendotp', [UserController::class, 'sendOTP']);
 Route::post('/verifyotp', [UserController::class, 'verifyOtp']);
-Route::get('/userProfile', [UserController::class, 'profilePage'])->middleware(TokenVerificationMiddleware::class);
+Route::get('/Profile', [UserController::class, 'profile'])->middleware(TokenVerificationMiddleware::class);
 Route::post('/updateProfile', [UserController::class, 'updateProfile'])->middleware(TokenVerificationMiddleware::class);
 
 

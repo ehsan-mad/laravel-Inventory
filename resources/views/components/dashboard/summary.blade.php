@@ -160,3 +160,31 @@
 
     </div>
 </div>
+
+<script>
+    async function getSummary() {
+        try {
+            showLoader();
+            let response = await axios.get('/dashboardSummary', HeaderToken());
+            hideLoader();
+            console.log(response.data);
+            if (response.data.status === "success") {
+                let data = response.data.data;
+                document.getElementById('product').innerText = data.product;
+                document.getElementById('category').innerText = data.category;
+                document.getElementById('customer').innerText = data.customer;
+                document.getElementById('invoice').innerText = data.invoice;
+                document.getElementById('total').innerText = data.total;
+                document.getElementById('vat').innerText = data.vat;
+                document.getElementById('payable').innerText = data.payable;
+            } else {
+                errorToast(response.data.message);
+            }
+        } catch (error) {
+            hideLoader();
+            errorToast(error.message);
+        }
+    }
+
+    getSummary();
+</script>

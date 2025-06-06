@@ -11,23 +11,32 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-     function userLoginPage():View{
+    public function userLoginPage(): View
+    {
         return view('pages.auth.loginpage');
     }
 
-    function userRegistrationPage(){
+    public function userRegistrationPage()
+    {
         return view('pages.auth.register');
     }
 
-    function SendOtpPage():View{
+    public function SendOtpPage(): View
+    {
         return view('pages.auth.sendotp');
     }
-    function VerifyOTPPage():View{
+    public function VerifyOTPPage(): View
+    {
         return view('pages.auth.verifyotp');
     }
 
-    function ResetPasswordPage():View{
+    public function ResetPasswordPage(): View
+    {
         return view('pages.auth.passwordreset');
+    }
+    public function profilePage(): View
+    {
+        return view('pages.dashboard.profile');
     }
     // Registration
     public function userRegistration(Request $request)
@@ -98,7 +107,7 @@ class UserController extends Controller
                 ]);
             }
         } catch (\Throwable $e) {
-              // log(error->getMessage);
+            // log(error->getMessage);
             return response()->json([
                 'status'  => 'failed',
                 'message' => $e->getMessage(),
@@ -136,7 +145,7 @@ class UserController extends Controller
             ]);
             if ($validator->fails()) {
                 return response()->json([
-                    'status'  => 'failed',
+                    'status' => 'failed',
                     'errors' => $validator->errors(),
                 ], 422);
             }
@@ -164,7 +173,7 @@ class UserController extends Controller
 
             } else {
                 return response()->json([
-                    'status'  => 'error',
+                    'status' => 'error',
                     'errors' => 'Cant send OTP, user not found',
                 ], 422);
             }
@@ -183,8 +192,8 @@ class UserController extends Controller
         try {
 
             $validator = Validator::make(request()->all(), [
-                
-                'otp'   => 'required|numeric',
+
+                'otp' => 'required|numeric',
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -228,7 +237,7 @@ class UserController extends Controller
     {
         try {
             $validator = Validator::make(request()->all(), [
-                
+
                 'password' => 'required|string|min:3',
             ]);
             if ($validator->fails()) {
@@ -249,18 +258,23 @@ class UserController extends Controller
             return response()->json([
                 'status'  => 'failed',
                 'message' => $e->getMessage(),
-            ] , 422);
+            ], 422);
 
         }
         // return view('pages.auth.resetpassword');
     }
-                                    // get user profile
-    public function profilePage()
+                                // get user profile
+    public function profile()
     { // Fetch user profile based on email and user_id from headers
         try {
-            $validator = Validator::make(request()->all(), [
+            $email     = request()->header('email');
+            $user_id   = request()->header('user_id');
+            $validator = Validator::make([
+                'email'   => $email,
+                'user_id' => $user_id,
+            ], [
                 'email'   => 'required|email',
-                'user_id' => 'required|integer',
+                'user_id' => 'required|numeric',
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -269,9 +283,7 @@ class UserController extends Controller
                 ], 422);
             }
 
-            $email   = request()->header('email');
-            $user_id = request()->header('user_id');
-            $user    = User::where(['email' => $email, 'id' => $user_id])->first();
+            $user = User::where(['email' => $email, 'id' => $user_id])->first();
 
             if ($user) {
                 return response()->json([
@@ -297,12 +309,15 @@ class UserController extends Controller
     // Update user profile
     public function updateProfile(Request $request)
     {
+        $user_id = request()->header('user_id');
+        $email   = request()->header('email');
         try { // Validate the request
             $validator = Validator::make(request()->all(), [
                 'first_name' => 'sometimes|string|max:255',
                 'last_name'  => 'sometimes|string|max:255',
-                'email'      => 'sometimes|email|unique:users,email',
+                'email'      => 'sometimes|email|unique:users,email,' . $user_id,
                 'mobile'     => 'sometimes|string|max:15',
+                'password'  => 'sometimes|string|min:3',
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -322,6 +337,8 @@ class UserController extends Controller
                         'last_name'  => $request->input('last_name') ?? $user->last_name,
                         'email'      => $request->input('email') ?? $user->email,
                         'mobile'     => $request->input('mobile') ?? $user->mobile,
+                        'password'   => $request->input('password') ?? $user->password,      
+                        // 'password'   => bcrypt($request->input('password') ?? $user->password),               
                     ]);
                     return response()->json([
                         'status'  => 'success',
