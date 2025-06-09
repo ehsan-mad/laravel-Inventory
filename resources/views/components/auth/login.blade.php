@@ -48,6 +48,7 @@ showLoader();
                     window.location.href = '/dashboard';
                 }, 1000);
             } else {
+                hideLoader();
                 errorToast(response.data.message);
             }
         } catch (error) {
